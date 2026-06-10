@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{.Artist.Name}}</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+    <header class="navbar">
+        <a href="/" class="logo">🎵 Groupie Tracker</a>
+    </header>
+
+    <main>
+
+        <!-- Artist Hero -->
+        <div class="artist-hero">
+            <img src="{{.Artist.Image}}" alt="{{.Artist.Name}}">
+            <div>
+                <h1>{{.Artist.Name}}</h1>
+                <p><strong>Formed:</strong> {{.Artist.CreationDate}}</p>
+                <p><strong>First Album:</strong> {{.Artist.FirstAlbum}}</p>
+            </div>
+        </div>
+
+        <div class="artist-content">
+
+            <!-- Members -->
+            <div class="section">
+                <h2>👥 Members</h2>
+                <ul>
+                    {{range .Artist.Members}}
+                    <li>{{.}}</li>
+                    {{end}}
+                </ul>
+            </div>
+
+            <!-- Concerts -->
+            <div class="section">
+                <h2>📍 Concert Locations & Dates</h2>
+                {{if .Relation}}
+                <div class="concerts">
+                    {{range $loc, $dates := .Relation}}
+                    <div class="concert-card">
+                        <h3>{{$loc}}</h3>
+                        <ul>
+                            {{range $dates}}
+                            <li>{{.}}</li>
+                            {{end}}
+                        </ul>
+                    </div>
+                    {{end}}
+                </div>
+                {{else}}
+                <p>No concert data available.</p>
+                {{end}}
+            </div>
+
+        </div>
+
+    </main>
+
+</body>
+</html>
