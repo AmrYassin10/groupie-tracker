@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"groupie-tracker/api"
@@ -48,12 +49,35 @@ func main() {
 }
 
 func loadAndSetData() error {
+	var artists []models.Artist
+	var relationsResp models.Relation
+	var errArtists, errRelations error
 
-	artists, err := api.FetchArtists()
-	if err != nil {
-		return err
+	// Fetch both APIs concurrently — cuts startup/refresh time roughly in half
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		artists, errArtists = api.FetchArtists()
+	}()
+
+	go func() {
+		defer wg.Done()
+		relationsResp, errRelations = api.FetchRelations()
+	}()
+
+	wg.Wait() // block until BOTH goroutines finish
+
+	// Only proceed if BOTH succeeded — keeps artists and relations in sync
+	if errArtists != nil {
+		return errArtists
+	}
+	if errRelations != nil {
+		return errRelations
 	}
 
+	// Use the results from the goroutines above — no second fetch needed
 	for i := range artists {
 		if artists[i].ID == 21 {
 			artists[i].Image = "/static/mamonasassassinas.jpeg"
@@ -61,14 +85,10 @@ func loadAndSetData() error {
 		}
 	}
 
+	// Pre-allocate maps with exact capacity — avoids rehashing
 	artistsMap := make(map[int]models.Artist, len(artists))
 	for _, artist := range artists {
 		artistsMap[artist.ID] = artist
-	}
-
-	relationsResp, err := api.FetchRelations()
-	if err != nil {
-		return err
 	}
 
 	relationsMap := make(map[int]map[string][]string, len(relationsResp.Index))
