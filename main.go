@@ -61,7 +61,7 @@ func loadAndSetData() error {
 		}
 	}
 
-	artistsMap := make(map[int]models.Artist)
+	artistsMap := make(map[int]models.Artist, len(artists))
 	for _, artist := range artists {
 		artistsMap[artist.ID] = artist
 	}
@@ -71,7 +71,7 @@ func loadAndSetData() error {
 		return err
 	}
 
-	relationsMap := make(map[int]map[string][]string)
+	relationsMap := make(map[int]map[string][]string, len(relationsResp.Index))
 	for _, rel := range relationsResp.Index {
 		relationsMap[rel.ID] = rel.DatesLocations
 	}
