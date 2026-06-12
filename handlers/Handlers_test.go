@@ -15,9 +15,12 @@ import (
 // then seeds the global data with fake artists so handler tests work
 // without hitting the real API.
 func TestMain(m *testing.M) {
+	if err := os.Chdir(".."); err != nil {
+		panic(err)
+	}
 
-	// Move from handlers/ up to the project root
-	os.Chdir("..")
+
+    // test code
 
 	// Initialize templates from the project root
 	InitTemplates("templates")
@@ -84,7 +87,14 @@ func TestHomeHandlerSuccess(t *testing.T) {
 		t.Error("expected response to contain 'Pantera'")
 	}
 }
+func BenchmarkHomeHandler(b *testing.B) {
+    req := httptest.NewRequest("GET", "/", nil)
 
+    for i := 0; i < b.N; i++ {
+        rr := httptest.NewRecorder()
+        HomeHandler(rr, req)
+    }
+}
 // POST / → 405 Method Not Allowed
 func TestHomeHandlerRejectsNonGET(t *testing.T) {
 

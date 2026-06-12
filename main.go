@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"sync"
 	"time"
+	_ "net/http/pprof" 
 
 	"groupie-tracker/api"
 	"groupie-tracker/handlers"
