@@ -24,7 +24,6 @@ func main() {
 		log.Fatal("All retries failed: ", err)
 	}
 
-	// background refresh every 2 hours — concurrency ✅
 	
 
 	// register routes
