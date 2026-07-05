@@ -25,17 +25,7 @@ func main() {
 	}
 
 	// background refresh every 2 hours — concurrency ✅
-	go func() {
-		for {
-			time.Sleep(2 * time.Hour)
-			log.Println("Refreshing data...")
-			if err := loadAndSetData(); err != nil {
-				log.Printf("Refresh failed, keeping old data: %v", err)
-			} else {
-				log.Println("Data refreshed successfully ✅")
-			}
-		}
-	}()
+	
 
 	// register routes
 	http.HandleFunc("/", handlers.HomeHandler)
