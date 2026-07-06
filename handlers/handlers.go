@@ -69,6 +69,10 @@ func HomeHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func ArtistHandler(w http.ResponseWriter, r *http.Request) {
+    	if tmpl == nil {
+        http.Error(w, "Server not initialised", http.StatusInternalServerError)
+        return
+	}
 
 	if r.Method != http.MethodGet {
 		http.Error(w, "Method Not Allowed", http.StatusMethodNotAllowed)
